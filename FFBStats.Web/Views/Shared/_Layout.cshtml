@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - CoreWeather</title>
+    <title>@ViewData["Title"] - Fantasy Football Stats</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -26,7 +26,15 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">CoreWeather</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Fantasy Football Stats</a>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <a asp-area="" asp-controller="Home" asp-action="SignInWithYahoo" class="navbar-brand">Sign in with Yahoo</a>
+                }
+                else
+                {
+                    <a asp-area="" asp-controller="Home" asp-action="GetLeagues" class="navbar-brand">Leagues</a>
+                }
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -43,7 +51,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @(DateTime.Now.Year) - CoreWeather</p>
+            <p>&copy; @(DateTime.Now.Year) - Fantasy Football Stats</p>
         </footer>
     </div>
 

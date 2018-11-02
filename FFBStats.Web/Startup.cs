@@ -1,5 +1,6 @@
 ﻿using FFBStats.Business;
 using FFBStats.Web.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -35,10 +36,32 @@ namespace FFBStats.Web
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            ConfigureOAuth(services);
             ConfigureIoC(services);
+        }
+
+        private void ConfigureOAuth(IServiceCollection services)
+        {
+            var yahooFantasyFootballChallengeScheme = Configuration["YahooChallengeScheme"];
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = yahooFantasyFootballChallengeScheme;
+                })
+                .AddCookie()
+                .AddOAuth(yahooFantasyFootballChallengeScheme, options =>
+                {
+                    options.ClientId = Configuration["YahooClientID"];
+                    options.ClientSecret = Configuration["YahooClientSecret"];
+                    options.CallbackPath = new PathString("/SignInYahoo");
+
+                    options.AuthorizationEndpoint = Configuration["YahooAuthorizationEndpoint"];
+                    options.TokenEndpoint = Configuration["YahooTokenEndpoint"];
+                    options.SaveTokens = true;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,7 +94,8 @@ namespace FFBStats.Web
 
         private static void ConfigureIoC(IServiceCollection services)
         {
-            services.AddSingleton<IWeatherRetrievalService, AccuWeatherRetrievalService>();
+            services.AddSingleton<IYahooFFBClient, YahooFfbClient>();
+            services.AddSingleton<IYahooWebRequestComposer, YahooWebRequestComposer>();
         }
     }
 }
