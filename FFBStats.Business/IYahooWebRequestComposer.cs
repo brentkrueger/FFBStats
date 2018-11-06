@@ -4,6 +4,6 @@ namespace FFBStats.Business
 {
     public interface IYahooWebRequestComposer
     {
-        Task<string> GetAsync(string url, string token);
+        Task<string> GetAsync(string uri, string token);
     }
 }

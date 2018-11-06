@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -22,7 +23,16 @@ namespace FFBStats.Business
 
         public Task<string> GetGameIds(string token)
         {
-            var url = "https://fantasysports.yahooapis.com/fantasy/v2/game/nfl";
+            var startingYear = 2001;
+            var endingYear = DateTime.Now.Year;
+            List<int> years = new List<int>();
+            for (int i = 0; i <= endingYear - startingYear; i++)
+            {
+                years.Add(startingYear+i);
+            }
+
+            var commaJoinedYears = string.Join(",", years);
+            var url = $"https://fantasysports.yahooapis.com/fantasy/v2/games;game_codes=nfl;seasons={commaJoinedYears}";
             return _yahooWebRequestComposer.GetAsync(url, token);
         }
     }
