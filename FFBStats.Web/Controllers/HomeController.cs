@@ -1,10 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
-using FFBStats.Business;
 using FFBStats.Web.Models;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace FFBStats.Web.Controllers
 {

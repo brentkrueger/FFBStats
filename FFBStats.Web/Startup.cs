@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Threading.Tasks;
-using FFBStats.Business;
+﻿using FFBStats.Business;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -76,7 +69,8 @@ namespace FFBStats.Web
                 })
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "/login";
+                    //handled by authentication controller, middleware takes over requests to these urls
+                    options.LoginPath = "/login"; 
                     options.LogoutPath = "/signout";
                 })
                 .AddYahoo(options =>
