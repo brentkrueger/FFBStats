@@ -1,27 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+using YahooFantasyWrapper.Client;
 
 namespace FFBStats.Business
 {
-    public class YahooFfbClient : IYahooFFBClient
+    public class YahooFFBClient : IYahooFFBClient
     {
         private readonly IYahooWebRequestComposer _yahooWebRequestComposer;
+        private readonly IYahooFantasyClient _yahooFantasyClient;
 
-        public YahooFfbClient(IYahooWebRequestComposer yahooWebRequestComposer)
+        public YahooFFBClient(IYahooWebRequestComposer yahooWebRequestComposer, IYahooFantasyClient yahooFantasyClient)
         {
             _yahooWebRequestComposer = yahooWebRequestComposer;
+            _yahooFantasyClient = yahooFantasyClient;
         }
 
-        public Task<string> GetLeagues(string token)
+        public IEnumerable<string> GetLeagues(string token)
         {
             var url = "https://fantasysports.yahooapis.com/fantasy/v2/leagues";
-            return _yahooWebRequestComposer.GetAsync(url, token);
+            var result = _yahooWebRequestComposer.GetAsync(url, token);
+            return new List<string>();
         }
 
-        public Task<string> GetGameIds(string token)
+        public IEnumerable<string> GetGameIds(string token)
         {
             var startingYear = 2001;
             var endingYear = DateTime.Now.Year;
@@ -33,7 +39,31 @@ namespace FFBStats.Business
 
             var commaJoinedYears = string.Join(",", years);
             var url = $"https://fantasysports.yahooapis.com/fantasy/v2/games;game_codes=nfl;seasons={commaJoinedYears}";
-            return _yahooWebRequestComposer.GetAsync(url, token);
+            var xmlResult = _yahooWebRequestComposer.GetAsync(url, token).Result;
+
+            var test = _yahooFantasyClient.UserResourceManager.GetUser(token);
+
+            return new List<string>();
+        }
+
+        private static T DeserializeIntoObject<T>(string xmlResult)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            StringReader rdr = new StringReader(xmlResult);
+            T fantasyContent = (T) serializer.Deserialize(rdr);
+            return fantasyContent;
+        }
+
+        public ScoreYear GetMaxScoreAllTime(string token)
+        {
+            var gameIDs = GetGameIds(token);
+
+            foreach (var gameID in gameIDs)
+            {
+                
+            }
+
+            return new ScoreYear() { Year = 2016, Points = (decimal) 242.2};
         }
     }
 }

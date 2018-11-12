@@ -1,10 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FFBStats.Business
 {
     public interface IYahooFFBClient
     {
-        Task<string> GetLeagues(string token);
-        Task<string> GetGameIds(string token);
+        IEnumerable<string> GetLeagues(string token);
+        IEnumerable<string> GetGameIds(string token);
+        ScoreYear GetMaxScoreAllTime(string token);
+    }
+
+    public class ScoreYear
+    {
+        public decimal Points { get; set; }
+        public int Year { get; set; }
     }
 }

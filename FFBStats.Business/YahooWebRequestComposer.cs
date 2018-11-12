@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -11,12 +12,25 @@ namespace FFBStats.Business
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             request.Headers.Add("Authorization", $"Bearer {token}");
 
-            using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
-            using (Stream stream = response.GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
+            try
             {
-                return await reader.ReadToEndAsync();
+                using (HttpWebResponse response = (HttpWebResponse) await request.GetResponseAsync())
+                using (Stream stream = response.GetResponseStream())
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    return await reader.ReadToEndAsync();
+                }
             }
+            catch (WebException ex)
+            {
+                var wwwAuthenticateHeader = ex.Response.Headers["WWW-Authenticate"];
+                if (wwwAuthenticateHeader.Contains("token_expired"))
+                {
+                    //figure out how to refresh token
+                }
+            }
+
+            return null;
         }
     }
 }

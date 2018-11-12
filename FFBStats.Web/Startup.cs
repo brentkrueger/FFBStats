@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using YahooFantasyWrapper.Client;
+using YahooFantasyWrapper.Configuration;
 
 namespace FFBStats.Web
 {
@@ -83,8 +85,10 @@ namespace FFBStats.Web
 
         private void ConfigureIoC(IServiceCollection services)
         {
-            services.AddSingleton<IYahooFFBClient, YahooFfbClient>();
+            services.AddSingleton<IYahooFFBClient, YahooFFBClient>();
             services.AddSingleton<IYahooWebRequestComposer, YahooWebRequestComposer>();
+            services.Configure<YahooConfiguration>(Configuration.GetSection("YahooConfiguration"));
+            services.AddSingleton<IYahooFantasyClient, YahooFantasyClient>();
         }
     }
 }

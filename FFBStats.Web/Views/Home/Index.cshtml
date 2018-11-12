@@ -1,4 +1,4 @@
-﻿@model string
+﻿@model HomeModel
 
 <div class="jumbotron">
     @if (User?.Identity?.IsAuthenticated ?? false) {
@@ -10,11 +10,17 @@
             }
         </p>
         
+        <div>
+            <ul>
+                <li>High Score All Time: @Model.MaxScoreAllTime in @Model.MaxScoreAllTimeYear</li>
+            </ul>
+        </div>
+
         <a class="btn btn-lg btn-danger" href="/signout?returnUrl=%2F">Sign out</a>
     }
-
     else {
         <h1>Welcome, anonymous</h1>
         <a class="btn btn-lg btn-success" href="/signin?returnUrl=%2F">Sign in</a>
     }
 </div>
+
