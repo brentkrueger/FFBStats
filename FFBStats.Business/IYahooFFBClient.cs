@@ -6,14 +6,14 @@ namespace FFBStats.Business
 {
     public interface IYahooFFBClient
     {
-        IEnumerable<string> GetLeagues(string token);
-        IEnumerable<string> GetGameIds(string token);
-        ScoreYear GetMaxScoreAllTime(string token);
+        ScoreTeamWeek GetMaxScoreCurrentYear(string token);
+        ScoreTeamWeek GetMinScoreCurrentYear(string token);
     }
 
-    public class ScoreYear
+    public class ScoreTeamWeek
     {
-        public decimal Points { get; set; }
-        public int Year { get; set; }
+        public double Points { get; set; }
+        public int Week { get; set; }
+        public string TeamName { get; set; }
     }
 }

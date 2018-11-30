@@ -2,10 +2,12 @@
 {
     public class HomeModel
     {
-        public decimal MaxScoreAllTime;
-        public int MaxScoreAllTimeYear;
+        public string MaxScoreCurrentYearTeamName;
+        public int MaxScoreCurrentYearWeek;
+        public double MaxScoreCurrentYearPoints;
 
-        public decimal MinScoreAllTime;
-        public int MinScoreAllTimeYear;
+        public string MinScoreCurrentYearTeamName;
+        public int MinScoreCurrentYearWeek;
+        public double MinScoreCurrentYearPoints;
     }
 }

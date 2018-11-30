@@ -59,7 +59,7 @@ namespace FFBStats.Web
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Record}/{action=Index}/{id?}");
             });
         }
 
@@ -86,7 +86,6 @@ namespace FFBStats.Web
         private void ConfigureIoC(IServiceCollection services)
         {
             services.AddSingleton<IYahooFFBClient, YahooFFBClient>();
-            services.AddSingleton<IYahooWebRequestComposer, YahooWebRequestComposer>();
             services.Configure<YahooConfiguration>(Configuration.GetSection("YahooConfiguration"));
             services.AddSingleton<IYahooFantasyClient, YahooFantasyClient>();
         }

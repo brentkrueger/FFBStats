@@ -1,69 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using YahooFantasyWrapper.Client;
+using YahooFantasyWrapper.Models;
 
 namespace FFBStats.Business
 {
     public class YahooFFBClient : IYahooFFBClient
     {
-        private readonly IYahooWebRequestComposer _yahooWebRequestComposer;
         private readonly IYahooFantasyClient _yahooFantasyClient;
+        private readonly IConfiguration _configuration;
+        private readonly string _leagueKey;
+        private readonly int?[] _allWeekArray = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
+        private const string MatchupStatus = "postevent";
 
-        public YahooFFBClient(IYahooWebRequestComposer yahooWebRequestComposer, IYahooFantasyClient yahooFantasyClient)
+        public YahooFFBClient(IYahooFantasyClient yahooFantasyClient, IConfiguration configuration)
         {
-            _yahooWebRequestComposer = yahooWebRequestComposer;
             _yahooFantasyClient = yahooFantasyClient;
+            _configuration = configuration;
+            _leagueKey = _configuration["YahooFantasyFootballLeagueKey"];
         }
-
-        public IEnumerable<string> GetLeagues(string token)
+        
+        public ScoreTeamWeek GetMaxScoreCurrentYear(string token)
         {
-            var url = "https://fantasysports.yahooapis.com/fantasy/v2/leagues";
-            var result = _yahooWebRequestComposer.GetAsync(url, token);
-            return new List<string>();
-        }
+            var league = _yahooFantasyClient.LeagueResourceManager.GetScoreboard(_leagueKey, token, _allWeekArray).Result;
 
-        public IEnumerable<string> GetGameIds(string token)
-        {
-            var startingYear = 2001;
-            var endingYear = DateTime.Now.Year;
-            List<int> years = new List<int>();
-            for (int i = 0; i <= endingYear - startingYear; i++)
+            List<ScoreboardTeam> scoreBoardTeams= new List<ScoreboardTeam>();
+
+            foreach (var matchup in league.Scoreboard.Matchups.Matchups.Where(m=>m.Status.ToLower().Equals(MatchupStatus)))
             {
-                years.Add(startingYear+i);
+                scoreBoardTeams.AddRange(matchup.Teams.Teams);
             }
 
-            var commaJoinedYears = string.Join(",", years);
-            var url = $"https://fantasysports.yahooapis.com/fantasy/v2/games;game_codes=nfl;seasons={commaJoinedYears}";
-            var xmlResult = _yahooWebRequestComposer.GetAsync(url, token).Result;
+            var max = scoreBoardTeams.OrderBy(t => t.TeamPoints.Total).Last();
 
-            var test = _yahooFantasyClient.UserResourceManager.GetUser(token);
-
-            return new List<string>();
+            return new ScoreTeamWeek() {Points = max.TeamPoints.Total, TeamName = max.Name, Week = max.TeamPoints.Week};
         }
 
-        private static T DeserializeIntoObject<T>(string xmlResult)
+        public ScoreTeamWeek GetMinScoreCurrentYear(string token)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(T));
-            StringReader rdr = new StringReader(xmlResult);
-            T fantasyContent = (T) serializer.Deserialize(rdr);
-            return fantasyContent;
-        }
+            var league = _yahooFantasyClient.LeagueResourceManager.GetScoreboard(_leagueKey, token, _allWeekArray).Result;
 
-        public ScoreYear GetMaxScoreAllTime(string token)
-        {
-            var gameIDs = GetGameIds(token);
+            List<ScoreboardTeam> scoreBoardTeams = new List<ScoreboardTeam>();
 
-            foreach (var gameID in gameIDs)
+            foreach (var matchup in league.Scoreboard.Matchups.Matchups.Where(m => m.Status.ToLower().Equals(MatchupStatus)))
             {
-                
+                scoreBoardTeams.AddRange(matchup.Teams.Teams);
             }
 
-            return new ScoreYear() { Year = 2016, Points = (decimal) 242.2};
+            var min = scoreBoardTeams.OrderBy(t => t.TeamPoints.Total).First();
+
+            return new ScoreTeamWeek() { Points = min.TeamPoints.Total, TeamName = min.Name, Week = min.TeamPoints.Week };
         }
     }
 }
