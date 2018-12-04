@@ -1,4 +1,8 @@
-﻿namespace FFBStats.Web.Models
+﻿using System.Collections;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace FFBStats.Web.Models
 {
     public class HomeModel
     {
@@ -9,5 +13,8 @@
         public string MinScoreCurrentYearTeamName;
         public int MinScoreCurrentYearWeek;
         public double MinScoreCurrentYearPoints;
+
+        public int SelectedYear;
+        public IEnumerable<SelectListItem> AvailableYearsSelectListItems;
     }
 }

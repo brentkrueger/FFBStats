@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -11,20 +12,53 @@ namespace FFBStats.Business
     {
         private readonly IYahooFantasyClient _yahooFantasyClient;
         private readonly IConfiguration _configuration;
-        private readonly string _leagueKey;
-        private readonly int?[] _allWeekArray = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
+        private readonly int?[] _allWeekArray = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
         private const string MatchupStatus = "postevent";
+        private Dictionary<int, string> GameIds;
 
-        public YahooFFBClient(IYahooFantasyClient yahooFantasyClient, IConfiguration configuration)
+        public YahooFFBClient(IYahooFantasyClient yahooFantasyClient)
         {
             _yahooFantasyClient = yahooFantasyClient;
-            _configuration = configuration;
-            _leagueKey = _configuration["YahooFantasyFootballLeagueKey"];
         }
-        
-        public ScoreTeamWeek GetMaxScoreCurrentYear(string token)
+
+        private Dictionary<int,string> GetGameIds(string token)
         {
-            var league = _yahooFantasyClient.LeagueResourceManager.GetScoreboard(_leagueKey, token, _allWeekArray).Result;
+            if (GameIds == null)
+            {
+                GameIds = new Dictionary<int, string>();
+                var leagueIds = LeagueIds.GetLeagueIds().OrderBy(l => l.Key);
+                var startingYear = leagueIds.First().Key;
+                var endingYear = leagueIds.Last().Key;
+                List<int> years = new List<int>();
+                for (int i = 0; i <= endingYear - startingYear; i++)
+                {
+                    years.Add(startingYear + i);
+                }
+
+                var games = _yahooFantasyClient.GameCollectionsManager.GetGames(new string[] { }, token, null,
+                        new GameCollectionFilters()
+                            {GameCodes = new[] {GameCode.nfl}, Seasons = years.ToArray()})
+                    .Result;
+
+                foreach (var game in games)
+                {
+                    GameIds.Add(Convert.ToInt32(game.Season), game.GameId);
+                }
+            }
+
+            return GameIds;
+        }
+
+        private string GetLeagueKey(int year, string token)
+        {
+            var gameId = GetGameIds(token).First(g => g.Key.Equals(year));
+            var leagueId = LeagueIds.GetLeagueIds().First(l => l.Key.Equals(year)).Value;
+            return $"{gameId.Value}.l.{leagueId}";
+        }
+
+        public ScoreTeamWeek GetMaxScoreForYearAllTeams(int year, string token)
+        {
+            var league = _yahooFantasyClient.LeagueResourceManager.GetScoreboard(GetLeagueKey(year, token), token, _allWeekArray).Result;
 
             List<ScoreboardTeam> scoreBoardTeams= new List<ScoreboardTeam>();
 
@@ -38,9 +72,9 @@ namespace FFBStats.Business
             return new ScoreTeamWeek() {Points = max.TeamPoints.Total, TeamName = max.Name, Week = max.TeamPoints.Week};
         }
 
-        public ScoreTeamWeek GetMinScoreCurrentYear(string token)
+        public ScoreTeamWeek GetMinScoreForYearAllTeams(int year, string token)
         {
-            var league = _yahooFantasyClient.LeagueResourceManager.GetScoreboard(_leagueKey, token, _allWeekArray).Result;
+            var league = _yahooFantasyClient.LeagueResourceManager.GetScoreboard(GetLeagueKey(year, token), token, _allWeekArray).Result;
 
             List<ScoreboardTeam> scoreBoardTeams = new List<ScoreboardTeam>();
 
