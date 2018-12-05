@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using YahooFantasyWrapper.Client;
 using YahooFantasyWrapper.Configuration;
+using YahooFantasyWrapper.Infrastructure;
 
 namespace FFBStats.Web
 {
@@ -59,7 +60,7 @@ namespace FFBStats.Web
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Record}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
 
@@ -88,6 +89,8 @@ namespace FFBStats.Web
             services.AddSingleton<IYahooFFBClient, YahooFFBClient>();
             services.Configure<YahooConfiguration>(Configuration.GetSection("YahooConfiguration"));
             services.AddSingleton<IYahooFantasyClient, YahooFantasyClient>();
+            services.AddSingleton<IRequestFactory, RequestFactory>();
+            services.AddTransient<IYahooAuthClient, YahooAuthClient>();
         }
     }
 }

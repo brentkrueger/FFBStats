@@ -8,16 +8,20 @@ using FFBStats.Web.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using YahooFantasyWrapper.Client;
+using YahooFantasyWrapper.Models;
 
 namespace FFBStats.Web.Controllers
 {
-    public class RecordController : Controller
+    public class HomeController : Controller
     {
         private readonly IYahooFFBClient _yahooFfbClient;
+        private readonly IYahooAuthClient _yahooAuthClient;
 
-        public RecordController(IYahooFFBClient yahooFfbClient)
+        public HomeController(IYahooFFBClient yahooFfbClient, IYahooAuthClient yahooAuthClient)
         {
             _yahooFfbClient = yahooFfbClient;
+            _yahooAuthClient = yahooAuthClient;
         }
 
         public async Task<IActionResult> Index(int? year)
@@ -36,10 +40,9 @@ namespace FFBStats.Web.Controllers
 
             try
             {
-                //todo figure out  refresh token implementation
                 if (User.Identity.IsAuthenticated)
                 {
-                    var accessToken = await HttpContext.GetTokenAsync("access_token");
+                    var accessToken = await GetAccessToken();
 
                     var maxScoreTeamWeek = _yahooFfbClient.GetMaxScoreForYearAllTeams(model.SelectedYear, accessToken);
                     var minScoreTeamWeek = _yahooFfbClient.GetMinScoreForYearAllTeams(model.SelectedYear, accessToken);
@@ -58,6 +61,17 @@ namespace FFBStats.Web.Controllers
             catch { }
 
             return model;
+        }
+
+        private async Task<string> GetAccessToken()
+        {
+            var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
+
+            var updatedAccessToken = await _yahooAuthClient.GetCurrentToken(refreshToken);
+
+            _yahooAuthClient.Auth.AccessToken = updatedAccessToken;
+
+            return updatedAccessToken;
         }
 
         private IEnumerable<SelectListItem> GetAvailableYearsSelectListItems()

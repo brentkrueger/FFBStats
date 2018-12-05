@@ -11,7 +11,6 @@ namespace FFBStats.Business
     public class YahooFFBClient : IYahooFFBClient
     {
         private readonly IYahooFantasyClient _yahooFantasyClient;
-        private readonly IConfiguration _configuration;
         private readonly int?[] _allWeekArray = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
         private const string MatchupStatus = "postevent";
         private Dictionary<int, string> GameIds;
