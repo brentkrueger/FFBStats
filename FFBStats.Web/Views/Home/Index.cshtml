@@ -1,51 +1,11 @@
-﻿@model HomeModel
-
-<div class="jumbotron">
-    <form asp-controller="Record" asp-action="UpdateYear" method="post">
-        @if (User?.Identity?.IsAuthenticated ?? false)
-        {
-            <h1>Welcome, @User.Identity.Name</h1>
-
-            <p>
-                @foreach (var claim in Context.User.Claims)
-                {
-                    <div>@claim.Type: <b>@claim.Value</b></div>
-                }
-            </p>
-            <div>
-                Year: <select asp-for="SelectedYear" asp-items="@Model.AvailableYearsSelectListItems"></select>
-            </div>
-
-            @foreach (var highScoreLowScoreYear in Model.HighScoreLowScoreYears)
-             {
-                 <div>
-                     <h2>High Score for @highScoreLowScoreYear.Year</h2>
-                     <ul>
-                         <li>Team: @highScoreLowScoreYear.HighScoreTeamName</li>
-                         <li>Score: @highScoreLowScoreYear.HighScorePoints</li>
-                         <li>Week: @highScoreLowScoreYear.HighScoreWeek</li>
-                     </ul>
-                 </div>
-
-                 <div>
-                     <h2>Low Score for @highScoreLowScoreYear.Year</h2>
-                     <ul>
-                         <li>Team: @highScoreLowScoreYear.LowScoreTeamName</li>
-                         <li>Score: @highScoreLowScoreYear.LowScorePoints</li>
-                         <li>Week: @highScoreLowScoreYear.LowScoreWeek</li>
-                     </ul>
-                 </div>
-             }
-
-            <button class="btn btn-lg btn-success" type="submit">Update</button>
-
-            <a class="btn btn-lg btn-danger" href="/signout?returnUrl=%2F">Sign out</a>
-        }
-        else
-        {
-            <h1>Welcome, anonymous</h1>
-            <a class="btn btn-lg btn-success" href="/signin?returnUrl=%2F">Sign in</a>
-        }
-    </form>
+﻿<div class="jumbotron">
+    @if (User?.Identity?.IsAuthenticated ?? false)
+    {
+        <h3>Choose a category from the menu above</h3>
+    }
+    else
+    {
+        <h3>You'll have to sign in to view any data.</h3>
+    }
 </div>
 

@@ -55,7 +55,7 @@ namespace FFBStats.Business
             return $"{gameId.Value}.l.{leagueId}";
         }
 
-        public (ScoreTeamWeek LowScoreTeamWeek, ScoreTeamWeek HighScoreTeamWeek) GetHighLowScoreForYearAllTeams(
+        public (ScoreTeamWeek LowScoreTeamWeek, ScoreTeamWeek HighScoreTeamWeek) GetHighLowScoreForYearWholeLeague(
             int year, string token)
         {
             var league = _yahooFantasyClient.LeagueResourceManager.GetScoreboard(GetLeagueKey(year, token), token, _allWeekArray).Result;

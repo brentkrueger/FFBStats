@@ -6,7 +6,13 @@ namespace FFBStats.Business
 {
     public interface IYahooFFBClient
     {
-        (ScoreTeamWeek LowScoreTeamWeek, ScoreTeamWeek HighScoreTeamWeek) GetHighLowScoreForYearAllTeams(int year,
+        /// <summary>
+        /// List of ScoreTeamWeek objects, representing the whole league high score for the year, and whole league low score for the year.
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        (ScoreTeamWeek LowScoreTeamWeek, ScoreTeamWeek HighScoreTeamWeek) GetHighLowScoreForYearWholeLeague(int year,
             string token);
     }
 

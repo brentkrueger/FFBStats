@@ -1,0 +1,28 @@
+﻿@model FFBStats.Web.ScoresModel
+
+<div class="jumbotron">
+            @foreach (var highScoreLowScoreYear in Model.HighScoreLowScoreYears)
+            {
+                <div class="highLowScore">
+                    <h2>@highScoreLowScoreYear.Year - Entire League</h2>
+                    <div class="highScore">
+                        <h3>High Score</h3>
+                        <ul>
+                            <li>Team: @highScoreLowScoreYear.HighScoreTeamName</li>
+                            <li>Score: @highScoreLowScoreYear.HighScorePoints</li>
+                            <li>Week: @highScoreLowScoreYear.HighScoreWeek</li>
+                        </ul>
+                    </div>
+                    <div class="lowScore">
+                        <h3>Low Score</h3>
+                        <ul>
+                            <li>Team: @highScoreLowScoreYear.LowScoreTeamName</li>
+                            <li>Score: @highScoreLowScoreYear.LowScorePoints</li>
+                            <li>Week: @highScoreLowScoreYear.LowScoreWeek</li>
+                        </ul>
+                    </div>
+                </div>
+                <hr/>
+            }
+</div>
+

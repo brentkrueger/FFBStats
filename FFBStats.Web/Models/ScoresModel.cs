@@ -1,4 +1,6 @@
-﻿namespace FFBStats.Web.Models
+﻿using System.Collections.Generic;
+
+namespace FFBStats.Web
 {
     public class HighScoreLowScoreYear
     {
@@ -11,5 +13,10 @@
         public double LowScorePoints;
 
         public int Year;
+    }
+
+    public class ScoresModel
+    {
+        public IEnumerable<HighScoreLowScoreYear> HighScoreLowScoreYears;
     }
 }

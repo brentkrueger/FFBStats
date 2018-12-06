@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FFBStats.Web</title>
+    <title>OlsonFF Stats</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     </environment>
 </head>
 <body>
@@ -26,11 +26,27 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Record" asp-action="Index" class="navbar-brand">FFBStats.Web</a>
+                <a asp-area="" asp-controller="Record" asp-action="Index" class="navbar-brand">OlsonFF Stats</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Record" asp-action="Index">Home</a></li>
+                    @if (User?.Identity?.IsAuthenticated ?? false)
+                    {
+                        <li class="loginName">Welcome, @User.Identity.Name</li>
+                    }
+                    else
+                    {
+                        <li class="loginName">Welcome, Anonymous</li>
+                    }
+                    @if (User?.Identity?.IsAuthenticated ?? false)
+                    {
+                        <li><a asp-area="" asp-controller="Scores" asp-action="Index">Scores</a></li>
+                        <li><a style="color: red;" href="/signout?returnUrl=%2F">Sign Out</a></li>
+                    }
+                    else
+                    {
+                        <li><a style="color: greenyellow;" href="/signin?returnUrl=%2F">Sign in</a></li>
+                    }
                 </ul>
                
             </div>
