@@ -5,12 +5,12 @@ namespace FFBStats.Web
     public class HighScoreLowScoreYear
     {
         public string HighScoreTeamName;
-        public string HighScoreManagerName;
+        public string HighScoreManagerNames;
         public int HighScoreWeek;
         public double HighScorePoints;
 
         public string LowScoreTeamName;
-        public string LowScoreManagerName;
+        public string LowScoreManagerNames;
         public int LowScoreWeek;
         public double LowScorePoints;
 

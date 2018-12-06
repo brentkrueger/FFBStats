@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using YahooFantasyWrapper.Client;
 using YahooFantasyWrapper.Models;
 
@@ -70,14 +68,34 @@ namespace FFBStats.Business
             var highScore = scoreBoardTeams.OrderBy(t => t.TeamPoints.Total).Last();
             var lowScore = scoreBoardTeams.OrderBy(t => t.TeamPoints.Total).First();
 
-            var highScoreTeamWeek = new ScoreTeamWeek() {Points = highScore.TeamPoints.Total, TeamName = highScore.Name, Week = highScore.TeamPoints.Week, ManagerName = highScore.ManagerList.Managers.First().Nickname};
-            var lowScoreTeamWeek = new ScoreTeamWeek() { Points = lowScore.TeamPoints.Total, TeamName = lowScore.Name, Week = lowScore.TeamPoints.Week, ManagerName = lowScore.ManagerList.Managers.First().Nickname };
+            var highScoreTeamWeek = new ScoreTeamWeek() {Points = highScore.TeamPoints.Total, TeamName = highScore.Name, Week = highScore.TeamPoints.Week, ManagerNames = string.Join(", ",highScore.ManagerList.Managers.Select(m=>m.Nickname))};
+            var lowScoreTeamWeek = new ScoreTeamWeek()
+            {
+                Points = lowScore.TeamPoints.Total, TeamName = lowScore.Name, Week = lowScore.TeamPoints.Week,
+                ManagerNames = string.Join(", ", lowScore.ManagerList.Managers.Select(m => m.Nickname))
+            };
 
             (ScoreTeamWeek lowScoreTeamWeek, ScoreTeamWeek highScoreTeamWeek) highLowTeamWeeks =
                 (lowScoreTeamWeek, highScoreTeamWeek);
 
             return highLowTeamWeeks;
         }
-        
+
+        public IEnumerable<Team> GetAllTimeTeams(string token)
+        {
+            var teamList = new List<Team>();
+            foreach (var leagueId in LeagueIds.GetLeagueIds())
+            {
+                var year = leagueId.Key;
+                var standings = _yahooFantasyClient.LeagueResourceManager.GetStandings(GetLeagueKey(year, token), token)
+                    .Result.Standings;
+                foreach (var team in standings.TeamList.Teams)
+                {
+                    teamList.Add(team);
+                }
+            }
+
+            return teamList;
+        }
     }
 }

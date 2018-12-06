@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using YahooFantasyWrapper.Models;
 
 namespace FFBStats.Business
 {
@@ -14,13 +15,14 @@ namespace FFBStats.Business
         /// <returns></returns>
         (ScoreTeamWeek LowScoreTeamWeek, ScoreTeamWeek HighScoreTeamWeek) GetHighLowScoreForYearWholeLeague(int year,
             string token);
+        IEnumerable<Team> GetAllTimeTeams(string token);
     }
 
     public class ScoreTeamWeek
     {
         public double Points { get; set; }
         public int Week { get; set; }
-        public string ManagerName { get; set; }
+        public string ManagerNames { get; set; }
         public string TeamName { get; set; }
     }
 }

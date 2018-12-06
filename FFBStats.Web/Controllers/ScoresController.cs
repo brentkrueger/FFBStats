@@ -65,11 +65,11 @@ namespace FFBStats.Web.Controllers
                         HighScorePoints = highScore.Points,
                         HighScoreWeek = highScore.Week,
                         HighScoreTeamName = highScore.TeamName,
-                        HighScoreManagerName = highScore.ManagerName,
+                        HighScoreManagerNames = highScore.ManagerNames,
                         LowScorePoints = lowScore.Points,
                         LowScoreWeek = lowScore.Week,
                         LowScoreTeamName = lowScore.TeamName,
-                        LowScoreManagerName = lowScore.ManagerName
+                        LowScoreManagerNames = lowScore.ManagerNames
                     });
                 }
                 catch (Exception ex)

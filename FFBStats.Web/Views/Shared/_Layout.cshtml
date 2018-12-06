@@ -40,6 +40,7 @@
                     }
                     @if (User?.Identity?.IsAuthenticated ?? false)
                     {
+                        <li><a asp-area="" asp-controller="Managers" asp-action="Index">Managers</a></li>
                         <li><a asp-area="" asp-controller="Scores" asp-action="Index">Scores</a></li>
                         <li><a style="color: red;" href="/signout?returnUrl=%2F">Sign Out</a></li>
                     }

@@ -1,0 +1,14 @@
+﻿@model FFBStats.Web.ManagersModel
+
+<div class="jumbotron">
+    @foreach (var managerRecord in Model.ManagerAllTimeRecords)
+    {
+        <div class="manager">
+            <h2>@managerRecord.ManagerName</h2>
+            <div class="highScore">
+                @managerRecord.Wins <span>W</span> @managerRecord.Losses <span>L</span>  @managerRecord.WinningPercentage <span>Win %</span>
+            </div>
+        </div>
+        <hr/>
+    }
+</div>
