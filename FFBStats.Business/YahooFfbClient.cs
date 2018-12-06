@@ -70,8 +70,8 @@ namespace FFBStats.Business
             var highScore = scoreBoardTeams.OrderBy(t => t.TeamPoints.Total).Last();
             var lowScore = scoreBoardTeams.OrderBy(t => t.TeamPoints.Total).First();
 
-            var highScoreTeamWeek = new ScoreTeamWeek() {Points = highScore.TeamPoints.Total, TeamName = highScore.Name, Week = highScore.TeamPoints.Week};
-            var lowScoreTeamWeek = new ScoreTeamWeek() { Points = lowScore.TeamPoints.Total, TeamName = lowScore.Name, Week = lowScore.TeamPoints.Week };
+            var highScoreTeamWeek = new ScoreTeamWeek() {Points = highScore.TeamPoints.Total, TeamName = highScore.Name, Week = highScore.TeamPoints.Week, ManagerName = highScore.ManagerList.Managers.First().Nickname};
+            var lowScoreTeamWeek = new ScoreTeamWeek() { Points = lowScore.TeamPoints.Total, TeamName = lowScore.Name, Week = lowScore.TeamPoints.Week, ManagerName = lowScore.ManagerList.Managers.First().Nickname };
 
             (ScoreTeamWeek lowScoreTeamWeek, ScoreTeamWeek highScoreTeamWeek) highLowTeamWeeks =
                 (lowScoreTeamWeek, highScoreTeamWeek);

@@ -20,6 +20,7 @@ namespace FFBStats.Business
     {
         public double Points { get; set; }
         public int Week { get; set; }
+        public string ManagerName { get; set; }
         public string TeamName { get; set; }
     }
 }
