@@ -55,7 +55,8 @@ namespace FFBStats.Business
             return $"{gameId.Value}.l.{leagueId}";
         }
 
-        public ScoreTeamWeek GetMaxScoreForYearAllTeams(int year, string token)
+        public (ScoreTeamWeek LowScoreTeamWeek, ScoreTeamWeek HighScoreTeamWeek) GetHighLowScoreForYearAllTeams(
+            int year, string token)
         {
             var league = _yahooFantasyClient.LeagueResourceManager.GetScoreboard(GetLeagueKey(year, token), token, _allWeekArray).Result;
 
@@ -66,25 +67,17 @@ namespace FFBStats.Business
                 scoreBoardTeams.AddRange(matchup.Teams.Teams);
             }
 
-            var max = scoreBoardTeams.OrderBy(t => t.TeamPoints.Total).Last();
+            var highScore = scoreBoardTeams.OrderBy(t => t.TeamPoints.Total).Last();
+            var lowScore = scoreBoardTeams.OrderBy(t => t.TeamPoints.Total).First();
 
-            return new ScoreTeamWeek() {Points = max.TeamPoints.Total, TeamName = max.Name, Week = max.TeamPoints.Week};
+            var highScoreTeamWeek = new ScoreTeamWeek() {Points = highScore.TeamPoints.Total, TeamName = highScore.Name, Week = highScore.TeamPoints.Week};
+            var lowScoreTeamWeek = new ScoreTeamWeek() { Points = lowScore.TeamPoints.Total, TeamName = lowScore.Name, Week = lowScore.TeamPoints.Week };
+
+            (ScoreTeamWeek lowScoreTeamWeek, ScoreTeamWeek highScoreTeamWeek) highLowTeamWeeks =
+                (lowScoreTeamWeek, highScoreTeamWeek);
+
+            return highLowTeamWeeks;
         }
-
-        public ScoreTeamWeek GetMinScoreForYearAllTeams(int year, string token)
-        {
-            var league = _yahooFantasyClient.LeagueResourceManager.GetScoreboard(GetLeagueKey(year, token), token, _allWeekArray).Result;
-
-            List<ScoreboardTeam> scoreBoardTeams = new List<ScoreboardTeam>();
-
-            foreach (var matchup in league.Scoreboard.Matchups.Matchups.Where(m => m.Status.ToLower().Equals(MatchupStatus)))
-            {
-                scoreBoardTeams.AddRange(matchup.Teams.Teams);
-            }
-
-            var min = scoreBoardTeams.OrderBy(t => t.TeamPoints.Total).First();
-
-            return new ScoreTeamWeek() { Points = min.TeamPoints.Total, TeamName = min.Name, Week = min.TeamPoints.Week };
-        }
+        
     }
 }

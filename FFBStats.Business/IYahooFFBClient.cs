@@ -6,8 +6,8 @@ namespace FFBStats.Business
 {
     public interface IYahooFFBClient
     {
-        ScoreTeamWeek GetMaxScoreForYearAllTeams(int year, string token);
-        ScoreTeamWeek GetMinScoreForYearAllTeams(int year, string token);
+        (ScoreTeamWeek LowScoreTeamWeek, ScoreTeamWeek HighScoreTeamWeek) GetHighLowScoreForYearAllTeams(int year,
+            string token);
     }
 
     public class ScoreTeamWeek

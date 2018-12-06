@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -31,8 +32,31 @@ namespace YahooFantasyWrapper.Client
                 var request = _factory.CreateRequest(endpoint);
 
                 var response = await client.GetAsync(request.RequestUri).ConfigureAwait(false);
-                var result = await response.Content.ReadAsStringAsync();
 
+                if (!response.IsSuccessStatusCode)
+                {
+                    int maxRetries = 10;
+                    int secondsToWait = 1;
+                    var retries = 0;
+
+                    while (!response.IsSuccessStatusCode)
+                    {
+                        Thread.Sleep(secondsToWait * 1000);
+                        response = await client.GetAsync(request.RequestUri).ConfigureAwait(false);
+                        retries++;
+                        if (response.IsSuccessStatusCode)
+                        {
+                            break;
+                        }
+                        if (retries == maxRetries)
+                        {
+                            throw new Exception("Response not successful");
+                        }
+                    }
+                }
+
+                var result = await response.Content.ReadAsStringAsync();
+                
                 if (string.IsNullOrEmpty(result))
                 {
                     throw new Exception("Combination of Resource and SubResources Not Allowed, Please try altering");

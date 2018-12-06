@@ -15,23 +15,27 @@
             <div>
                 Year: <select asp-for="SelectedYear" asp-items="@Model.AvailableYearsSelectListItems"></select>
             </div>
-            <div>
-                <h2>High Score for @Model.SelectedYear</h2>
-                <ul>
-                    <li>Team: @Model.MaxScoreCurrentYearTeamName</li>
-                    <li>Score: @Model.MaxScoreCurrentYearPoints</li>
-                    <li>Week: @Model.MaxScoreCurrentYearWeek</li>
-                </ul>
-            </div>
 
-            <div>
-                <h2>Low Score for @Model.SelectedYear</h2>
-                <ul>
-                    <li>Team: @Model.MinScoreCurrentYearTeamName</li>
-                    <li>Score: @Model.MinScoreCurrentYearPoints</li>
-                    <li>Week: @Model.MinScoreCurrentYearWeek</li>
-                </ul>
-            </div>
+            @foreach (var highScoreLowScoreYear in Model.HighScoreLowScoreYears)
+             {
+                 <div>
+                     <h2>High Score for @highScoreLowScoreYear.Year</h2>
+                     <ul>
+                         <li>Team: @highScoreLowScoreYear.HighScoreTeamName</li>
+                         <li>Score: @highScoreLowScoreYear.HighScorePoints</li>
+                         <li>Week: @highScoreLowScoreYear.HighScoreWeek</li>
+                     </ul>
+                 </div>
+
+                 <div>
+                     <h2>Low Score for @highScoreLowScoreYear.Year</h2>
+                     <ul>
+                         <li>Team: @highScoreLowScoreYear.LowScoreTeamName</li>
+                         <li>Score: @highScoreLowScoreYear.LowScorePoints</li>
+                         <li>Week: @highScoreLowScoreYear.LowScoreWeek</li>
+                     </ul>
+                 </div>
+             }
 
             <button class="btn btn-lg btn-success" type="submit">Update</button>
 

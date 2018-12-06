@@ -24,19 +24,17 @@ namespace FFBStats.Web.Controllers
             _yahooAuthClient = yahooAuthClient;
         }
 
-        public async Task<IActionResult> Index(int? year)
+        public async Task<IActionResult> Index()
         {
-            return View(GetHomeModel(year).Result);
+            return View(GetHomeModel().Result);
         }
 
-        public async Task<HomeModel> GetHomeModel(int? year)
+        public async Task<HomeModel> GetHomeModel()
         {
             var model = new HomeModel
             {
                 AvailableYearsSelectListItems = GetAvailableYearsSelectListItems().OrderByDescending(m => m.Value)
             };
-
-            model.SelectedYear = year ?? DateTime.Now.Year;
 
             try
             {
@@ -44,17 +42,32 @@ namespace FFBStats.Web.Controllers
                 {
                     var accessToken = await GetAccessToken();
 
-                    var maxScoreTeamWeek = _yahooFfbClient.GetMaxScoreForYearAllTeams(model.SelectedYear, accessToken);
-                    var minScoreTeamWeek = _yahooFfbClient.GetMinScoreForYearAllTeams(model.SelectedYear, accessToken);
+                    var highScoreLowScoreYearList = new List<HighScoreLowScoreYear>();
 
-                    model.MaxScoreCurrentYearPoints = maxScoreTeamWeek.Points;
-                    model.MaxScoreCurrentYearTeamName = maxScoreTeamWeek.TeamName;
-                    model.MaxScoreCurrentYearWeek = maxScoreTeamWeek.Week;
+                    foreach (var leagueId in LeagueIds.GetLeagueIds())
+                    {
+                        try
+                        {
+                            var year = leagueId.Key;
+                            var lowHighScoresWeek = _yahooFfbClient
+                                .GetHighLowScoreForYearAllTeams(year, accessToken);
+                            var lowScore = lowHighScoresWeek.LowScoreTeamWeek;
+                            var highScore = lowHighScoresWeek.HighScoreTeamWeek;
+                            highScoreLowScoreYearList.Add(new HighScoreLowScoreYear()
+                            {
+                                Year = year,
+                                HighScorePoints = highScore.Points,
+                                HighScoreWeek = highScore.Week,
+                                HighScoreTeamName = highScore.TeamName,
+                                LowScorePoints = lowScore.Points,
+                                LowScoreWeek = lowScore.Week,
+                                LowScoreTeamName = lowScore.TeamName
+                            });
+                        }
+                        catch (Exception ex) { }
+                    }
 
-                    model.MinScoreCurrentYearPoints = minScoreTeamWeek.Points;
-                    model.MinScoreCurrentYearTeamName = minScoreTeamWeek.TeamName;
-                    model.MinScoreCurrentYearWeek = minScoreTeamWeek.Week;
-
+                    model.HighScoreLowScoreYears = highScoreLowScoreYearList;
                     return model;
                 }
             }
